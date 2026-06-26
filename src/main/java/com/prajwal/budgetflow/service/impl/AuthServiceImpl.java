@@ -6,19 +6,24 @@ import com.prajwal.budgetflow.dto.RegisterRequest;
 import com.prajwal.budgetflow.entity.User;
 import com.prajwal.budgetflow.repository.UserRepository;
 import com.prajwal.budgetflow.service.AuthService;
+import com.prajwal.budgetflow.util.JwtUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public AuthServiceImpl(UserRepository userRepository,
-                           BCryptPasswordEncoder passwordEncoder) {
+                           BCryptPasswordEncoder passwordEncoder,
+                           JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -39,6 +44,19 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse login(AuthRequest request) {
-        throw new UnsupportedOperationException("Login will be implemented in the next milestone.");
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid email or password."));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid email or password.");
+        }
+
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        return AuthResponse.builder()
+                .token(token)
+                .message("Login successful.")
+                .build();
     }
 }
