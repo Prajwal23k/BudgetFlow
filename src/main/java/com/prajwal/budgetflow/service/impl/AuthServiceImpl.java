@@ -9,6 +9,8 @@ import com.prajwal.budgetflow.service.AuthService;
 import com.prajwal.budgetflow.util.JwtUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.prajwal.budgetflow.exception.DuplicateResourceException;
+import com.prajwal.budgetflow.exception.UnauthorizedException;
 
 
 @Service
@@ -30,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
     public void register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists.");
+            throw new DuplicateResourceException("Email already exists.");
         }
 
         User user = User.builder()
@@ -49,7 +51,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new RuntimeException("Invalid email or password."));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid email or password.");
+            throw new UnauthorizedException("Invalid email or password.");
         }
 
         String token = jwtUtil.generateToken(user.getEmail());
