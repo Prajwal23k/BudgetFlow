@@ -28,4 +28,30 @@ public class IncomeController {
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
+
+    @PutMapping("/{incomeId}")
+    public ResponseEntity<IncomeResponse> updateIncome(
+            @PathVariable Long incomeId,
+            @Valid @RequestBody IncomeRequest request) {
+
+        return ResponseEntity.ok(
+                incomeService.updateIncome(incomeId, request));
+    }
+
+    @DeleteMapping("/{incomeId}")
+    public ResponseEntity<Void> deleteIncome(
+            @PathVariable Long incomeId) {
+
+        incomeService.deleteIncome(incomeId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{incomeId}")
+    public ResponseEntity<IncomeResponse> getIncome(
+            @PathVariable Long incomeId) {
+
+        return ResponseEntity.ok(
+                incomeService.getIncome(incomeId));
+    }
 }

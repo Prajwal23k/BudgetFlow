@@ -4,6 +4,8 @@ import com.prajwal.budgetflow.dto.IncomeRequest;
 import com.prajwal.budgetflow.dto.IncomeResponse;
 import com.prajwal.budgetflow.entity.Income;
 import com.prajwal.budgetflow.entity.User;
+import com.prajwal.budgetflow.exception.ResourceNotFoundException;
+import com.prajwal.budgetflow.exception.UnauthorizedException;
 import com.prajwal.budgetflow.repository.IncomeRepository;
 import com.prajwal.budgetflow.security.CustomUserDetails;
 import com.prajwal.budgetflow.service.IncomeService;
@@ -53,17 +55,60 @@ public class IncomeServiceImpl implements IncomeService {
 
     @Override
     public IncomeResponse updateIncome(Long incomeId, IncomeRequest request) {
-        throw new UnsupportedOperationException("Will be implemented later.");
+
+        User currentUser = getCurrentUser();
+
+        Income income = incomeRepository.findById(incomeId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Income not found."));
+
+        if (!income.getUser().getId().equals(currentUser.getId())) {
+            throw new UnauthorizedException(
+                    "You are not allowed to update this income.");
+        }
+
+        income.setTitle(request.getTitle());
+        income.setAmount(request.getAmount());
+        income.setDescription(request.getDescription());
+        income.setDate(request.getDate());
+
+        Income updatedIncome = incomeRepository.save(income);
+
+        return IncomeMapper.toResponse(updatedIncome);
     }
 
     @Override
     public void deleteIncome(Long incomeId) {
-        throw new UnsupportedOperationException("Will be implemented later.");
+
+        User currentUser = getCurrentUser();
+
+        Income income = incomeRepository.findById(incomeId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Income not found."));
+
+        if (!income.getUser().getId().equals(currentUser.getId())) {
+            throw new UnauthorizedException(
+                    "You are not allowed to delete this income.");
+        }
+
+        incomeRepository.delete(income);
     }
 
     @Override
     public IncomeResponse getIncome(Long incomeId) {
-        throw new UnsupportedOperationException("Will be implemented later.");
+
+        User currentUser = getCurrentUser();
+
+        Income income = incomeRepository.findById(incomeId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Income not found."));
+
+        if (!income.getUser().getId().equals(currentUser.getId())) {
+            throw new UnauthorizedException(
+                    "You are not allowed to view this income.");
+        }
+
+        return IncomeMapper.toResponse(income);
     }
 
     @Override
