@@ -81,4 +81,33 @@ public class ExpenseController {
 
         );
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<ExpenseResponse>> searchExpenses(
+
+            @RequestParam String title,
+
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "10") int size) {
+
+        return ResponseEntity.ok(
+                expenseService.searchByTitle(title, page, size));
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<Page<ExpenseResponse>> filterByCategory(
+
+            @PathVariable Long categoryId,
+
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "10") int size) {
+
+        return ResponseEntity.ok(
+                expenseService.filterByCategory(
+                        categoryId,
+                        page,
+                        size));
+    }
 }

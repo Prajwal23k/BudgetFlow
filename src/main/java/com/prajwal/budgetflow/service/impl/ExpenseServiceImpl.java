@@ -186,7 +186,26 @@ public class ExpenseServiceImpl implements ExpenseService {
             String title,
             int page,
             int size) {
-        throw new UnsupportedOperationException("Will be implemented later.");
+
+        User currentUser = getCurrentUser();
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Expense> expenses =
+                expenseRepository.findByUserAndTitleContainingIgnoreCase(
+                        currentUser,
+                        title,
+                        pageable);
+
+        return expenses.map(expense ->
+                ExpenseResponse.builder()
+                        .id(expense.getId())
+                        .title(expense.getTitle())
+                        .amount(expense.getAmount())
+                        .description(expense.getDescription())
+                        .date(expense.getDate())
+                        .categoryName(expense.getCategory().getName())
+                        .build());
     }
 
     @Override
@@ -194,6 +213,25 @@ public class ExpenseServiceImpl implements ExpenseService {
             Long categoryId,
             int page,
             int size) {
-        throw new UnsupportedOperationException("Will be implemented later.");
+
+        User currentUser = getCurrentUser();
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Expense> expenses =
+                expenseRepository.findByUserAndCategoryId(
+                        currentUser,
+                        categoryId,
+                        pageable);
+
+        return expenses.map(expense ->
+                ExpenseResponse.builder()
+                        .id(expense.getId())
+                        .title(expense.getTitle())
+                        .amount(expense.getAmount())
+                        .description(expense.getDescription())
+                        .date(expense.getDate())
+                        .categoryName(expense.getCategory().getName())
+                        .build());
     }
 }
