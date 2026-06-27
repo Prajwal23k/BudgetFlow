@@ -10,6 +10,7 @@ import com.prajwal.budgetflow.repository.CategoryRepository;
 import com.prajwal.budgetflow.repository.ExpenseRepository;
 import com.prajwal.budgetflow.security.CustomUserDetails;
 import com.prajwal.budgetflow.service.ExpenseService;
+import com.prajwal.budgetflow.util.ExpenseMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -53,14 +54,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         Expense savedExpense = expenseRepository.save(expense);
 
-        return ExpenseResponse.builder()
-                .id(savedExpense.getId())
-                .title(savedExpense.getTitle())
-                .amount(savedExpense.getAmount())
-                .description(savedExpense.getDescription())
-                .date(savedExpense.getDate())
-                .categoryName(savedExpense.getCategory().getName())
-                .build();
+        return ExpenseMapper.toResponse(savedExpense);
     }
 
     private User getCurrentUser() {
@@ -101,14 +95,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         Expense updatedExpense = expenseRepository.save(expense);
 
-        return ExpenseResponse.builder()
-                .id(updatedExpense.getId())
-                .title(updatedExpense.getTitle())
-                .amount(updatedExpense.getAmount())
-                .description(updatedExpense.getDescription())
-                .date(updatedExpense.getDate())
-                .categoryName(updatedExpense.getCategory().getName())
-                .build();
+        return ExpenseMapper.toResponse(updatedExpense);
     }
 
     @Override
@@ -142,14 +129,7 @@ public class ExpenseServiceImpl implements ExpenseService {
                     "You are not allowed to view this expense.");
         }
 
-        return ExpenseResponse.builder()
-                .id(expense.getId())
-                .title(expense.getTitle())
-                .amount(expense.getAmount())
-                .description(expense.getDescription())
-                .date(expense.getDate())
-                .categoryName(expense.getCategory().getName())
-                .build();
+        return ExpenseMapper.toResponse(expense);
     }
 
     @Override
@@ -170,15 +150,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         Page<Expense> expenses =
                 expenseRepository.findByUser(currentUser, pageable);
 
-        return expenses.map(expense ->
-                ExpenseResponse.builder()
-                        .id(expense.getId())
-                        .title(expense.getTitle())
-                        .amount(expense.getAmount())
-                        .description(expense.getDescription())
-                        .date(expense.getDate())
-                        .categoryName(expense.getCategory().getName())
-                        .build());
+        return expenses.map(ExpenseMapper::toResponse);
     }
 
     @Override
@@ -197,15 +169,7 @@ public class ExpenseServiceImpl implements ExpenseService {
                         title,
                         pageable);
 
-        return expenses.map(expense ->
-                ExpenseResponse.builder()
-                        .id(expense.getId())
-                        .title(expense.getTitle())
-                        .amount(expense.getAmount())
-                        .description(expense.getDescription())
-                        .date(expense.getDate())
-                        .categoryName(expense.getCategory().getName())
-                        .build());
+        return expenses.map(ExpenseMapper::toResponse);
     }
 
     @Override
@@ -224,14 +188,6 @@ public class ExpenseServiceImpl implements ExpenseService {
                         categoryId,
                         pageable);
 
-        return expenses.map(expense ->
-                ExpenseResponse.builder()
-                        .id(expense.getId())
-                        .title(expense.getTitle())
-                        .amount(expense.getAmount())
-                        .description(expense.getDescription())
-                        .date(expense.getDate())
-                        .categoryName(expense.getCategory().getName())
-                        .build());
+        return expenses.map(ExpenseMapper::toResponse);
     }
 }
