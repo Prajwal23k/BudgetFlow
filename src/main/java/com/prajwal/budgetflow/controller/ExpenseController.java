@@ -28,4 +28,24 @@ public class ExpenseController {
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
+
+    @PutMapping("/{expenseId}")
+    public ResponseEntity<ExpenseResponse> updateExpense(
+            @PathVariable Long expenseId,
+            @Valid @RequestBody ExpenseRequest request) {
+
+        ExpenseResponse response =
+                expenseService.updateExpense(expenseId, request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{expenseId}")
+    public ResponseEntity<Void> deleteExpense(
+            @PathVariable Long expenseId) {
+
+        expenseService.deleteExpense(expenseId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

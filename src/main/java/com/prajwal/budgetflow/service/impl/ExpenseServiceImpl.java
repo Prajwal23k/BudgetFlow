@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import com.prajwal.budgetflow.exception.UnauthorizedException;
 
 @Service
 public class ExpenseServiceImpl implements ExpenseService {
@@ -71,13 +72,57 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public ExpenseResponse updateExpense(Long expenseId, ExpenseRequest request) {
-        throw new UnsupportedOperationException("Will be implemented later.");
+    public ExpenseResponse updateExpense(Long expenseId,
+                                         ExpenseRequest request) {
+
+        User currentUser = getCurrentUser();
+
+        Expense expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Expense not found."));
+
+        if (!expense.getUser().getId().equals(currentUser.getId())) {
+            throw new UnauthorizedException(
+                    "You are not allowed to update this expense.");
+        }
+
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Category not found."));
+
+        expense.setTitle(request.getTitle());
+        expense.setAmount(request.getAmount());
+        expense.setDescription(request.getDescription());
+        expense.setDate(request.getDate());
+        expense.setCategory(category);
+
+        Expense updatedExpense = expenseRepository.save(expense);
+
+        return ExpenseResponse.builder()
+                .id(updatedExpense.getId())
+                .title(updatedExpense.getTitle())
+                .amount(updatedExpense.getAmount())
+                .description(updatedExpense.getDescription())
+                .date(updatedExpense.getDate())
+                .categoryName(updatedExpense.getCategory().getName())
+                .build();
     }
 
     @Override
     public void deleteExpense(Long expenseId) {
-        throw new UnsupportedOperationException("Will be implemented later.");
+
+        User currentUser = getCurrentUser();
+
+        Expense expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Expense not found."));
+
+        if (!expense.getUser().getId().equals(currentUser.getId())) {
+            throw new UnauthorizedException(
+                    "You are not allowed to delete this expense.");
+        }
+
+        expenseRepository.delete(expense);
     }
 
     @Override
