@@ -15,6 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import com.prajwal.budgetflow.exception.UnauthorizedException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class ExpenseServiceImpl implements ExpenseService {
@@ -155,7 +158,27 @@ public class ExpenseServiceImpl implements ExpenseService {
             int size,
             String sortBy,
             String sortDirection) {
-        throw new UnsupportedOperationException("Will be implemented later.");
+
+        User currentUser = getCurrentUser();
+
+        Sort sort = sortDirection.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Expense> expenses =
+                expenseRepository.findByUser(currentUser, pageable);
+
+        return expenses.map(expense ->
+                ExpenseResponse.builder()
+                        .id(expense.getId())
+                        .title(expense.getTitle())
+                        .amount(expense.getAmount())
+                        .description(expense.getDescription())
+                        .date(expense.getDate())
+                        .categoryName(expense.getCategory().getName())
+                        .build());
     }
 
     @Override

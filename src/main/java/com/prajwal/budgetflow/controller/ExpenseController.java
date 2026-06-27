@@ -4,6 +4,7 @@ import com.prajwal.budgetflow.dto.ExpenseRequest;
 import com.prajwal.budgetflow.dto.ExpenseResponse;
 import com.prajwal.budgetflow.service.ExpenseService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,5 +58,27 @@ public class ExpenseController {
                 expenseService.getExpense(expenseId);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<ExpenseResponse>> getAllExpenses(
+
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "10") int size,
+
+            @RequestParam(defaultValue = "date") String sortBy,
+
+            @RequestParam(defaultValue = "desc") String sortDirection) {
+
+        return ResponseEntity.ok(
+
+                expenseService.getAllExpenses(
+                        page,
+                        size,
+                        sortBy,
+                        sortDirection)
+
+        );
     }
 }
