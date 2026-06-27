@@ -127,7 +127,26 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public ExpenseResponse getExpense(Long expenseId) {
-        throw new UnsupportedOperationException("Will be implemented later.");
+
+        User currentUser = getCurrentUser();
+
+        Expense expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Expense not found."));
+
+        if (!expense.getUser().getId().equals(currentUser.getId())) {
+            throw new UnauthorizedException(
+                    "You are not allowed to view this expense.");
+        }
+
+        return ExpenseResponse.builder()
+                .id(expense.getId())
+                .title(expense.getTitle())
+                .amount(expense.getAmount())
+                .description(expense.getDescription())
+                .date(expense.getDate())
+                .categoryName(expense.getCategory().getName())
+                .build();
     }
 
     @Override

@@ -48,4 +48,14 @@ public class ExpenseController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{expenseId}")
+    public ResponseEntity<ExpenseResponse> getExpense(
+            @PathVariable Long expenseId) {
+
+        ExpenseResponse response =
+                expenseService.getExpense(expenseId);
+
+        return ResponseEntity.ok(response);
+    }
 }
