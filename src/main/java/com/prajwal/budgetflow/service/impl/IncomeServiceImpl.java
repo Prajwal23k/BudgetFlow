@@ -14,6 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class IncomeServiceImpl implements IncomeService {
@@ -112,12 +115,42 @@ public class IncomeServiceImpl implements IncomeService {
     }
 
     @Override
-    public Page<IncomeResponse> getAllIncomes(int page, int size, String sortBy, String sortDirection) {
-        throw new UnsupportedOperationException("Will be implemented later.");
+    public Page<IncomeResponse> getAllIncomes(
+            int page,
+            int size,
+            String sortBy,
+            String sortDirection) {
+
+        User currentUser = getCurrentUser();
+
+        Sort sort = sortDirection.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Income> incomes =
+                incomeRepository.findByUser(currentUser, pageable);
+
+        return incomes.map(IncomeMapper::toResponse);
     }
 
     @Override
-    public Page<IncomeResponse> searchByTitle(String title, int page, int size) {
-        throw new UnsupportedOperationException("Will be implemented later.");
+    public Page<IncomeResponse> searchByTitle(
+            String title,
+            int page,
+            int size) {
+
+        User currentUser = getCurrentUser();
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Income> incomes =
+                incomeRepository.findByUserAndTitleContainingIgnoreCase(
+                        currentUser,
+                        title,
+                        pageable);
+
+        return incomes.map(IncomeMapper::toResponse);
     }
 }

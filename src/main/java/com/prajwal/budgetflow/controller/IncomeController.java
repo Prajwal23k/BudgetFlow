@@ -4,6 +4,7 @@ import com.prajwal.budgetflow.dto.IncomeRequest;
 import com.prajwal.budgetflow.dto.IncomeResponse;
 import com.prajwal.budgetflow.service.IncomeService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,5 +54,40 @@ public class IncomeController {
 
         return ResponseEntity.ok(
                 incomeService.getIncome(incomeId));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<IncomeResponse>> getAllIncomes(
+
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "10") int size,
+
+            @RequestParam(defaultValue = "date") String sortBy,
+
+            @RequestParam(defaultValue = "desc") String sortDirection) {
+
+        return ResponseEntity.ok(
+                incomeService.getAllIncomes(
+                        page,
+                        size,
+                        sortBy,
+                        sortDirection));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<IncomeResponse>> searchIncome(
+
+            @RequestParam String title,
+
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "10") int size) {
+
+        return ResponseEntity.ok(
+                incomeService.searchByTitle(
+                        title,
+                        page,
+                        size));
     }
 }
