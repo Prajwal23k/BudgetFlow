@@ -4,6 +4,8 @@ import com.prajwal.budgetflow.entity.Budget;
 import com.prajwal.budgetflow.entity.Category;
 import com.prajwal.budgetflow.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -15,4 +17,5 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
             Integer month,
             Integer year
     );
+    Page<Budget> findByUser(User user, Pageable pageable);
 }
