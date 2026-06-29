@@ -16,8 +16,4 @@ public class DashboardResponse {
     private BigDecimal totalExpense;
 
     private BigDecimal remainingBalance;
-
-    private Integer budgetUsedPercentage;
-
-    private String budgetStatus;
 }

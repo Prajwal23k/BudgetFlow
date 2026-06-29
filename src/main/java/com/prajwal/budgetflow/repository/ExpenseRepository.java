@@ -5,6 +5,9 @@ import com.prajwal.budgetflow.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.math.BigDecimal;
 
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
@@ -21,4 +24,11 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
             Long categoryId,
             Pageable pageable
     );
+
+    @Query("""
+        SELECT COALESCE(SUM(e.amount), 0)
+        FROM Expense e
+        WHERE e.user = :user
+        """)
+    BigDecimal getTotalExpense(User user);
 }
