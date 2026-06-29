@@ -16,9 +16,11 @@ public class DashboardController {
     }
 
     @GetMapping
-    public ResponseEntity<DashboardResponse> getDashboard() {
+    public ResponseEntity<DashboardResponse> getDashboard(
+            @RequestParam Integer month,
+            @RequestParam Integer year) {
 
         return ResponseEntity.ok(
-                dashboardService.getDashboard());
+                dashboardService.getDashboard(month, year));
     }
 }

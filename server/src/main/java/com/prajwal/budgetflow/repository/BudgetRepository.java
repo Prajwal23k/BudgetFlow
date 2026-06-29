@@ -20,4 +20,11 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
     );
     Page<Budget> findByUser(User user, Pageable pageable);
     List<Budget> findByUser(User user);
+    List<Budget> findByUserAndMonthAndYear(
+
+            User user,
+
+            Integer month,
+
+            Integer year);
 }

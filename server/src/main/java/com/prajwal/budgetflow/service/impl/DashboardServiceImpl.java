@@ -23,7 +23,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final IncomeRepository incomeRepository;
     private final ExpenseRepository expenseRepository;
-    BudgetRepository budgetRepository;
+    private final BudgetRepository budgetRepository;
 
     public DashboardServiceImpl(
             IncomeRepository incomeRepository,
@@ -36,16 +36,30 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public DashboardResponse getDashboard() {
+    public DashboardResponse getDashboard(
+            Integer month,
+            Integer year) {
 
 
         User currentUser = getCurrentUser();
 
         BigDecimal totalIncome =
-                incomeRepository.getTotalIncome(currentUser);
+                incomeRepository.getMonthlyIncome(
+
+                        currentUser,
+
+                        month,
+
+                        year);
 
         BigDecimal totalExpense =
-                expenseRepository.getTotalExpense(currentUser);
+                expenseRepository.getMonthlyExpense(
+
+                        currentUser,
+
+                        month,
+
+                        year);
 
         BigDecimal remainingBalance =
                 totalIncome.subtract(totalExpense);
@@ -53,7 +67,13 @@ public class DashboardServiceImpl implements DashboardService {
                 new ArrayList<>();
 
         List<Budget> budgets =
-                budgetRepository.findByUser(currentUser);
+                budgetRepository.findByUserAndMonthAndYear(
+
+                        currentUser,
+
+                        month,
+
+                        year);
 
         for (Budget budget : budgets) {
 
