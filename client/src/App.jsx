@@ -1,30 +1,13 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import Login from './pages/Login/Login'
-import ProtectedRoute from './components/common/ProtectedRoute'
-
-function Register() {
-  return <h1>Register Page</h1>
-}
-
-function Dashboard() {
-  return <h1>Dashboard</h1>
-}
-
-function Expenses() {
-  return <h1>Expenses Page</h1>
-}
-
-function Income() {
-  return <h1>Income</h1>
-}
-
-function Budgets() {
-  return <h1>Budgets</h1>
-}
-
-function Profile() {
-  return <h1>Profile</h1>
-}
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/Login/Login';
+import Register from './pages/Register/Register';
+import Dashboard from './pages/Dashboard/Dashboard';
+import Expenses from './pages/Expenses/Expenses';
+import Income from './pages/Income/Income';
+import Budgets from './pages/Budgets/Budgets';
+import Profile from './pages/Profile/Profile';
+import ProtectedRoute from './components/common/ProtectedRoute';
+import AppLayout from './components/layout/AppLayout';
 
 function App() {
   return (
@@ -32,14 +15,25 @@ function App() {
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-      <Route path="/expenses" element={<ProtectedRoute><Expenses /></ProtectedRoute>} />
-      <Route path="/income" element={<ProtectedRoute><Income /></ProtectedRoute>} />
-      <Route path="/budgets" element={<ProtectedRoute><Budgets /></ProtectedRoute>} />
-      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+
+      {/* Protected routes wrapped in AppLayout */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/expenses" element={<Expenses />} />
+        <Route path="/income" element={<Income />} />
+        <Route path="/budgets" element={<Budgets />} />
+        <Route path="/profile" element={<Profile />} />
+      </Route>
+
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;
